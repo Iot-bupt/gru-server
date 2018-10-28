@@ -18,6 +18,8 @@ import java.util.UUID;
  * @date 2015年3月13日 下午3:13:46
  */
 public class Client {
+
+    //注释测试git
     private final static Logger logger = LoggerFactory.getLogger(Client.class);
 
     public IAck ack;
