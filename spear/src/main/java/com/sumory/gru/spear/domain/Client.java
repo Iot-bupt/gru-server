@@ -19,7 +19,6 @@ import java.util.UUID;
  */
 public class Client {
 
-    //注释测试git
     private final static Logger logger = LoggerFactory.getLogger(Client.class);
 
     public IAck ack;
