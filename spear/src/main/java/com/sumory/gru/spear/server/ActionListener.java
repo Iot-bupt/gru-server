@@ -221,6 +221,16 @@ public class ActionListener {
         ackRequest.sendAckData(result);
     }
 
+    @OnEvent("filemsg")
+    public  void onFileHandler(SocketIOClient ioClient, String data, AckRequest ackRequest){
+        System.out.println(data);
+    }
+
+    @OnEvent("fileblob")
+    public  void onFileblobHandler(SocketIOClient ioClient, String data, AckRequest ackRequest)  {
+               System.out.println(data);
+    }
+
     @OnEvent("msg")
     public void onMsgEventHandler(SocketIOClient ioClient, String data, AckRequest ackRequest) {
         logger.debug("收到信息, ioClient sessionId:{}, msg:{}", ioClient.getSessionId(), data);
