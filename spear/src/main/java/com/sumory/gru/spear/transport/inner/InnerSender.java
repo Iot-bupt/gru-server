@@ -40,6 +40,7 @@ public class InnerSender implements ISender {
                     MsgObject msg = new MsgObject();
 
                     InnerSender.this.msgQueue.put(msg);//put方法放入一个msg，若queue满了，等到queue有位置
+                    System.out.println("put方法放入一个msg，若queue满了，等到queue有位置");
                 }
                 catch (Exception e) {
                     logger.error("往内部消息队列传入消息发生异常", e);

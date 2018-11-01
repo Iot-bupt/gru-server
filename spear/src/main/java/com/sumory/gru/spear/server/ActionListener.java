@@ -12,6 +12,7 @@ import com.sumory.gru.common.utils.CollectionUtils;
 import com.sumory.gru.common.utils.IdUtil;
 import com.sumory.gru.common.utils.TokenUtil;
 import com.sumory.gru.spear.SpearContext;
+import com.sumory.gru.spear.common.MsgUtil;
 import com.sumory.gru.spear.domain.*;
 import com.sumory.gru.spear.transport.IReceiver;
 import com.sumory.gru.spear.transport.ISender;
@@ -19,6 +20,7 @@ import com.sumory.gru.stat.service.StatService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -239,7 +241,18 @@ public class ActionListener {
             if (msgType == MsgObject.BRAODCAST.getValue()) {//群发
                 logger.debug("来自用户{}的群播消息", user.getId());
             } else if (msgType == MsgObject.UNICAST.getValue()) {//单发
-                logger.debug("来自用户{}-->用户{}的消息", user.getId(), msg.getTarget().get("id"));
+                if (msg.getTarget().get("id") == null){
+                    logger.debug("用户{}不在线，消息缓存", msg.getTarget().get("id"));
+                    switch (msg.getContentType()){
+                        case 0: MsgUtil.saveStringFile((String)msg.getContent());break;
+                        case 1: MsgUtil.saveImageFile((InputStream)msg.getContent());break;
+                        case 2: MsgUtil.saveAudioFile((InputStream)msg.getContent());break;
+                        case 3: MsgUtil.saveVidioFile((InputStream)msg.getContent());break;
+                        default:break;
+                    }
+                }else {
+                    logger.debug("来自用户{}-->用户{}的消息", user.getId(), msg.getTarget().get("id"));
+                }
             } else {
                 CommonResult result = new CommonResult(false, ResultCode.PARAMS_ERROR, "消息类型不正确，请注明类型");
                 ackRequest.sendAckData(result);//ack消息，告知客户端发生错误

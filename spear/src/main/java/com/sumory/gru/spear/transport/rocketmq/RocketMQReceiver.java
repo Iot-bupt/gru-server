@@ -65,7 +65,7 @@ public class RocketMQReceiver implements IReceiver {
      * 
      * @author sumory.wu @date 2015年1月16日 下午6:59:44
      * @param topic "class"
-     * @param subExpression classId
+     //* @param subExpression classId
      */
     @Override
     public void subscribe(final String topic) {
@@ -178,7 +178,7 @@ public class RocketMQReceiver implements IReceiver {
                             target.put("id", targetId);
                             target.put("type", -1);//扩展字段，暂时没用到
                             StringMessage sm = new StringMessage(0, m.getFromId(), msgType, target,
-                                    m.getContent());
+                                    (String) m.getContent());
 
                             if (msgType == MsgObject.BRAODCAST.getValue()) {//群发
                                 sendToGroup(targetId, sm);

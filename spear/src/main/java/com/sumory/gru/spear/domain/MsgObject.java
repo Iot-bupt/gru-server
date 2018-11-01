@@ -27,8 +27,24 @@ public class MsgObject {
 
     private long fromId;//发送者id
     private int type;//类型: 1 广播，0 单播给指定target
+    private int contentType;
     private Map<String, Object> target;
-    private String content;
+    private Object content;
+
+    public static MsgContentType TEXT = MsgContentType.TEXT;
+    public static MsgContentType PICTURE = MsgContentType.PICUTURE;
+
+    public int getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(int contentType) {
+        this.contentType = contentType;
+    }
+
+    public static MsgContentType AUDIO = MsgContentType.AUDIO;
+    public static MsgContentType VIDIO = MsgContentType.VIDIO;
+
 
     public static MsgType UNICAST = MsgType.UNICAST;
     public static MsgType BRAODCAST = MsgType.BRAODCAST;
@@ -58,11 +74,11 @@ public class MsgObject {
         this.target = target;
     }
 
-    public String getContent() {
+    public Object getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    public void setContent(Object content) {
         this.content = content;
     }
 

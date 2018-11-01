@@ -111,7 +111,7 @@ public class RedisReceiver implements IReceiver {
                         Map<String, Object> target = new HashMap<String, Object>();
                         target.put("id", targetId);
                         target.put("type", -1);//扩展字段，暂时没用到
-                        StringMessage sm = new StringMessage(0, m.getFromId(), msgType, target, m
+                        StringMessage sm = new StringMessage(0, m.getFromId(), msgType, target, (String)m
                                 .getContent());
 
                         if (msgType == MsgObject.BRAODCAST.getValue()) {//群发
