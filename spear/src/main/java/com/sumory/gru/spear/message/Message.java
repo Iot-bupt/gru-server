@@ -5,14 +5,24 @@ import java.util.Map;
 import com.alibaba.fastjson.JSONObject;
 
 // 字符串消息
-public class StringMessage extends BaseMessage {
+public class Message extends BaseMessage {
     private long fromId;//来自谁
     private int msgType;//类型: 1 广播，0 单播给指定target
-    private Map<String, Object> target;
-    private String content;
+    private int MsgContentType;
 
-    public StringMessage(long id, long fromId, int msgType, Map<String, Object> target,
-            String content) {
+    public int getMsgContentType() {
+        return MsgContentType;
+    }
+
+    public void setMsgContentType(int msgContentType) {
+        MsgContentType = msgContentType;
+    }
+
+    private Map<String, Object> target;
+    private Object content;
+
+    public Message(long id, long fromId, int msgType, Map<String, Object> target,
+                   Object content) {
         super(id);
         this.createTime = System.currentTimeMillis();
 
@@ -46,11 +56,11 @@ public class StringMessage extends BaseMessage {
         this.target = target;
     }
 
-    public String getContent() {
+    public Object getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    public void setContent(Object content) {
         this.content = content;
     }
 

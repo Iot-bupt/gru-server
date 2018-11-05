@@ -17,7 +17,7 @@ import com.sumory.gru.spear.domain.Group;
 import com.sumory.gru.spear.domain.MsgObject;
 import com.sumory.gru.spear.domain.User;
 import com.sumory.gru.spear.message.BaseMessage;
-import com.sumory.gru.spear.message.StringMessage;
+import com.sumory.gru.spear.message.Message;
 import com.sumory.gru.spear.thread.ExecutesManager;
 import com.sumory.gru.spear.transport.IReceiver;
 
@@ -111,7 +111,7 @@ public class RedisReceiver implements IReceiver {
                         Map<String, Object> target = new HashMap<String, Object>();
                         target.put("id", targetId);
                         target.put("type", -1);//扩展字段，暂时没用到
-                        StringMessage sm = new StringMessage(0, m.getFromId(), msgType, target, (String)m
+                        Message sm = new Message(0, m.getFromId(), msgType, target, m
                                 .getContent());
 
                         if (msgType == MsgObject.BRAODCAST.getValue()) {//群发

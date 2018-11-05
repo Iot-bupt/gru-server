@@ -15,7 +15,6 @@ import com.alibaba.rocketmq.client.consumer.listener.ConsumeOrderlyContext;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeOrderlyStatus;
 import com.alibaba.rocketmq.client.consumer.listener.MessageListenerOrderly;
 import com.alibaba.rocketmq.common.consumer.ConsumeFromWhere;
-import com.alibaba.rocketmq.common.message.Message;
 import com.alibaba.rocketmq.common.message.MessageExt;
 import com.alibaba.rocketmq.common.protocol.heartbeat.MessageModel;
 import com.sumory.gru.spear.SpearContext;
@@ -23,7 +22,7 @@ import com.sumory.gru.spear.domain.Group;
 import com.sumory.gru.spear.domain.MsgObject;
 import com.sumory.gru.spear.domain.User;
 import com.sumory.gru.spear.message.BaseMessage;
-import com.sumory.gru.spear.message.StringMessage;
+import com.sumory.gru.spear.message.Message;
 import com.sumory.gru.spear.thread.ExecutesManager;
 import com.sumory.gru.spear.transport.IReceiver;
 
@@ -156,7 +155,7 @@ public class RocketMQReceiver implements IReceiver {
         @Override
         public ConsumeOrderlyStatus consumeMessage(List<MessageExt> msgs,
                 ConsumeOrderlyContext context) {
-            final Message msg = msgs.get(0);
+            final com.alibaba.rocketmq.common.message.Message msg = msgs.get(0);
             try {//要求不得抛出异常，这里try{}catch掉
                 logger.debug("收到队列消息<--- thread:{} msg:{}", Thread.currentThread().getName(), msg);
                 RocketMQReceiver.this.getCallExecute("msg-sender").execute(new Runnable() {
@@ -177,8 +176,8 @@ public class RocketMQReceiver implements IReceiver {
                             Map<String, Object> target = new HashMap<String, Object>();
                             target.put("id", targetId);
                             target.put("type", -1);//扩展字段，暂时没用到
-                            StringMessage sm = new StringMessage(0, m.getFromId(), msgType, target,
-                                    (String) m.getContent());
+                            Message sm = new Message(0, m.getFromId(), msgType, target,
+                                     m.getContent());
 
                             if (msgType == MsgObject.BRAODCAST.getValue()) {//群发
                                 sendToGroup(targetId, sm);

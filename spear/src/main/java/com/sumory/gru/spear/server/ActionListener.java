@@ -20,7 +20,7 @@ import com.sumory.gru.stat.service.StatService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -36,6 +36,8 @@ public class ActionListener {
     private ISender sender;
     private IReceiver receiver;
     private String gruTopic = "gru_topic";
+    private String filename;
+    private String filePath;
 
     public ActionListener(final SpearContext context) {
         this.context = context;
@@ -225,12 +227,28 @@ public class ActionListener {
 
     @OnEvent("filemsg")
     public  void onFileHandler(SocketIOClient ioClient, String data, AckRequest ackRequest){
+        /*logger.debug("收到文件，ioClient sessionid:{},msg:{}",ioClient.getSessionId(),data);
+        boolean checkResult = checkAuth(ioClient);
+        if (!checkResult) {
+            logger.debug("无授权访问，断开连接: {}", ioClient.getRemoteAddress());
+            ioClient.disconnect();
+        }
+        try {
+            final MsgObject msg = JSONObject.parseObject(data,MsgObject.class);
+            filename = msg.getFilename();
+            System.out.println(filename);
+            File file = new File(filePath+filename);
+        }catch (Exception e){
+            e.printStackTrace();
+        }*/
         System.out.println(data);
     }
 
     @OnEvent("fileblob")
-    public  void onFileblobHandler(SocketIOClient ioClient, String data, AckRequest ackRequest)  {
+    public  void onFileblobHandler(SocketIOClient ioClient, String data, AckRequest ackRequest) throws IOException {
                System.out.println(data);
+                String finalData = new String(data.getBytes("GBK"),"ISO-8859-1");
+               MsgUtil.saveFile(new ByteArrayInputStream(finalData.getBytes()));
     }
 
     @OnEvent("msg")
@@ -251,19 +269,8 @@ public class ActionListener {
             if (msgType == MsgObject.BRAODCAST.getValue()) {//群发
                 logger.debug("来自用户{}的群播消息", user.getId());
             } else if (msgType == MsgObject.UNICAST.getValue()) {//单发
-                if (msg.getTarget().get("id") == null){
-                    logger.debug("用户{}不在线，消息缓存", msg.getTarget().get("id"));
-                    switch (msg.getContentType()){
-                        case 0: MsgUtil.saveStringFile((String)msg.getContent());break;
-                        case 1: MsgUtil.saveImageFile((InputStream)msg.getContent());break;
-                        case 2: MsgUtil.saveAudioFile((InputStream)msg.getContent());break;
-                        case 3: MsgUtil.saveVidioFile((InputStream)msg.getContent());break;
-                        default:break;
-                    }
-                }else {
                     logger.debug("来自用户{}-->用户{}的消息", user.getId(), msg.getTarget().get("id"));
-                }
-            } else {
+                } else {
                 CommonResult result = new CommonResult(false, ResultCode.PARAMS_ERROR, "消息类型不正确，请注明类型");
                 ackRequest.sendAckData(result);//ack消息，告知客户端发生错误
                 return;

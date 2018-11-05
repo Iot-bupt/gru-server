@@ -1,5 +1,6 @@
 package com.sumory.gru.spear.transport.inner;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -8,6 +9,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.sumory.gru.spear.common.MsgUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +19,7 @@ import com.sumory.gru.spear.domain.Group;
 import com.sumory.gru.spear.domain.MsgObject;
 import com.sumory.gru.spear.domain.User;
 import com.sumory.gru.spear.message.BaseMessage;
-import com.sumory.gru.spear.message.StringMessage;
+import com.sumory.gru.spear.message.Message;
 import com.sumory.gru.spear.thread.ExecutesManager;
 import com.sumory.gru.spear.transport.IReceiver;
 
@@ -100,7 +102,7 @@ public class InnerReceiver implements IReceiver {
                         Map<String, Object> target = new HashMap<String, Object>();
                         target.put("id", targetId);
                         target.put("type", -1);//扩展字段，暂时没用到
-                        StringMessage sm = new StringMessage(0, m.getFromId(), msgType, target, (String) m
+                        Message sm = new Message(0, m.getFromId(), msgType, target, m
                                 .getContent());
 
                         if (msgType == MsgObject.BRAODCAST.getValue()) {//群发
@@ -149,13 +151,30 @@ public class InnerReceiver implements IReceiver {
      * @param userId
      * @param msg
      */
-    private void sendToUser(String userId, BaseMessage msg) {
-        logger.info("开始单发, userId:{}  msgId:{}", userId, msg.getId());
+    private void sendToUser(String userId, Message msg) {
+        logger.info("开始单发, userId:{}  msgId:{}", userId, msg.getFromId());
         if (StringUtils.isBlank(userId))
             return;
 
         User u = this.userMap.get(userId);
         if (u == null || u.getClients() == null) {
+            logger.debug("用户{}不在线，消息缓存", msg.getTarget().get("id"));
+            switch (msg.getMsgContentType()) {
+                case 0:
+                    MsgUtil.saveStringFile((String) msg.getContent());
+                    break;
+                case 1:
+                    MsgUtil.saveImageFile((InputStream) msg.getContent());
+                    break;
+                case 2:
+                    MsgUtil.saveAudioFile((InputStream) msg.getContent());
+                    break;
+                case 3:
+                    MsgUtil.saveVidioFile((InputStream) msg.getContent());
+                    break;
+                default:
+                    break;
+            }
             logger.debug("单发消息时无法获取到用户或者用户的clients为空, userId:{}", userId);
             return;
         }

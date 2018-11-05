@@ -30,6 +30,15 @@ public class MsgObject {
     private int contentType;
     private Map<String, Object> target;
     private Object content;
+    private String filename;
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
 
     public static MsgContentType TEXT = MsgContentType.TEXT;
     public static MsgContentType PICTURE = MsgContentType.PICUTURE;
