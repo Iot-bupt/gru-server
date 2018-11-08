@@ -227,7 +227,7 @@ public class ActionListener {
 
     @OnEvent("filemsg")
     public  void onFileHandler(SocketIOClient ioClient, String data, AckRequest ackRequest){
-        /*logger.debug("收到文件，ioClient sessionid:{},msg:{}",ioClient.getSessionId(),data);
+        logger.debug("收到文件，ioClient sessionid:{},msg:{}",ioClient.getSessionId(),data);
         boolean checkResult = checkAuth(ioClient);
         if (!checkResult) {
             logger.debug("无授权访问，断开连接: {}", ioClient.getRemoteAddress());
@@ -238,9 +238,10 @@ public class ActionListener {
             filename = msg.getFilename();
             System.out.println(filename);
             File file = new File(filePath+filename);
+            file.createNewFile();
         }catch (Exception e){
             e.printStackTrace();
-        }*/
+        }
         System.out.println(data);
     }
 
@@ -248,7 +249,8 @@ public class ActionListener {
     public  void onFileblobHandler(SocketIOClient ioClient, String data, AckRequest ackRequest) throws IOException {
                System.out.println(data);
                 String finalData = new String(data.getBytes("GBK"),"ISO-8859-1");
-               MsgUtil.saveFile(new ByteArrayInputStream(finalData.getBytes()));
+                MsgUtil.GenerateImage(finalData); //解析成可读文件
+               //MsgUtil.saveFile(new ByteArrayInputStream(finalData.getBytes())); //保存为字符串
     }
 
     @OnEvent("msg")
