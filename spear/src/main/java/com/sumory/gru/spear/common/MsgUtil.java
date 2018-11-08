@@ -9,7 +9,7 @@ public class MsgUtil {
 
     public static void saveFile(InputStream inputStream) throws IOException{
         BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File("G://test.txt")));
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File("G://test.gif")));
         byte[] bytes = new byte[1024];
         while (bufferedInputStream.read(bytes) != -1){
             bufferedOutputStream.write(bytes,0,1000);
@@ -30,7 +30,7 @@ public class MsgUtil {
                 }
             }
 
-            String imgFilePath = "G://test.txt";
+            String imgFilePath = "G://test.gif"; //只要把这里的文件名更改一下，就能保存任何想保存的文件名，还需要后续处理
             OutputStream out = new FileOutputStream(imgFilePath);
             out.write(b);
             out.flush();
