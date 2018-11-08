@@ -158,23 +158,6 @@ public class InnerReceiver implements IReceiver {
 
         User u = this.userMap.get(userId);
         if (u == null || u.getClients() == null) {
-            logger.debug("用户{}不在线，消息缓存", msg.getTarget().get("id"));
-            switch (msg.getMsgContentType()) {
-                case 0:
-                    MsgUtil.saveStringFile((String) msg.getContent());
-                    break;
-                case 1:
-                    MsgUtil.saveImageFile((InputStream) msg.getContent());
-                    break;
-                case 2:
-                    MsgUtil.saveAudioFile((InputStream) msg.getContent());
-                    break;
-                case 3:
-                    MsgUtil.saveVidioFile((InputStream) msg.getContent());
-                    break;
-                default:
-                    break;
-            }
             logger.debug("单发消息时无法获取到用户或者用户的clients为空, userId:{}", userId);
             return;
         }
