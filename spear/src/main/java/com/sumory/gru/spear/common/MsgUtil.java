@@ -18,7 +18,7 @@ public class MsgUtil {
         bufferedOutputStream.close();
     }
 
-    public static boolean GenerateImage(String imgStr){
+    public static boolean GenerateFile(String imgStr,String filename){
         if (imgStr == null)
             return false;
         BASE64Decoder decoder = new BASE64Decoder();
@@ -30,8 +30,8 @@ public class MsgUtil {
                 }
             }
 
-            String imgFilePath = "G://test.gif"; //只要把这里的文件名更改一下，就能保存任何想保存的文件名，还需要后续处理
-            OutputStream out = new FileOutputStream(imgFilePath);
+            String FilePath = "G://GruFile//" + filename; //文件路径可以随时修改为可保存的路径
+            OutputStream out = new FileOutputStream(FilePath);
             out.write(b);
             out.flush();
             out.close();

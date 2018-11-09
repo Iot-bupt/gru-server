@@ -36,8 +36,8 @@ public class ActionListener {
     private ISender sender;
     private IReceiver receiver;
     private String gruTopic = "gru_topic";
-    private String filename;
-    private String filePath;
+    private static String filename;
+    private String filePath = "G://GruFile//";
 
     public ActionListener(final SpearContext context) {
         this.context = context;
@@ -226,32 +226,33 @@ public class ActionListener {
     }
 
     @OnEvent("filemsg")
-    public  void onFileHandler(SocketIOClient ioClient, String data, AckRequest ackRequest){
-        logger.debug("收到文件，ioClient sessionid:{},msg:{}",ioClient.getSessionId(),data);
+    public void onFileHandler(SocketIOClient ioClient, String data, AckRequest ackRequest) {
+        logger.debug("收到文件，ioClient sessionid:{},msg:{}", ioClient.getSessionId(), data);
         boolean checkResult = checkAuth(ioClient);
         if (!checkResult) {
             logger.debug("无授权访问，断开连接: {}", ioClient.getRemoteAddress());
             ioClient.disconnect();
         }
         try {
-            final MsgObject msg = JSONObject.parseObject(data,MsgObject.class);
+            final MsgObject msg = JSONObject.parseObject(data, MsgObject.class);
             filename = msg.getFilename();
             System.out.println(filename);
-            File file = new File(filePath+filename);
+            File file = new File(filePath + filename);
             file.createNewFile();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println(data);
     }
 
     @OnEvent("fileblob")
-    public  void onFileblobHandler(SocketIOClient ioClient, String data, AckRequest ackRequest) throws IOException {
-               System.out.println(data);
-                String finalData = new String(data.getBytes("GBK"),"ISO-8859-1");
-                MsgUtil.GenerateImage(finalData); //解析成可读文件
-               //MsgUtil.saveFile(new ByteArrayInputStream(finalData.getBytes())); //保存为字符串
+    public void onFileblobHandler(SocketIOClient ioClient, String data, AckRequest ackRequest) throws IOException {
+        System.out.println(data);
+        String finalData = new String(data.getBytes("GBK"), "ISO-8859-1");
+        MsgUtil.GenerateFile(finalData, filename); //解析成可读文件
+        //MsgUtil.saveFile(new ByteArrayInputStream(finalData.getBytes())); //保存为字符串
     }
+
 
     @OnEvent("msg")
     public void onMsgEventHandler(SocketIOClient ioClient, String data, AckRequest ackRequest) {
@@ -271,8 +272,8 @@ public class ActionListener {
             if (msgType == MsgObject.BRAODCAST.getValue()) {//群发
                 logger.debug("来自用户{}的群播消息", user.getId());
             } else if (msgType == MsgObject.UNICAST.getValue()) {//单发
-                    logger.debug("来自用户{}-->用户{}的消息", user.getId(), msg.getTarget().get("id"));
-                } else {
+                logger.debug("来自用户{}-->用户{}的消息", user.getId(), msg.getTarget().get("id"));
+            } else {
                 CommonResult result = new CommonResult(false, ResultCode.PARAMS_ERROR, "消息类型不正确，请注明类型");
                 ackRequest.sendAckData(result);//ack消息，告知客户端发生错误
                 return;
