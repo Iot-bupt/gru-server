@@ -14,6 +14,8 @@ import com.sumory.gru.common.utils.TokenUtil;
 import com.sumory.gru.spear.SpearContext;
 import com.sumory.gru.spear.common.MsgUtil;
 import com.sumory.gru.spear.domain.*;
+import com.sumory.gru.spear.message.FileMessage;
+import com.sumory.gru.spear.message.Message;
 import com.sumory.gru.spear.transport.IReceiver;
 import com.sumory.gru.spear.transport.ISender;
 import com.sumory.gru.stat.service.StatService;
@@ -37,7 +39,7 @@ public class ActionListener {
     private IReceiver receiver;
     private String gruTopic = "gru_topic";
     private static String filename;
-    private String filePath = "G://GruFile//";
+    private String filePath = "E://GruTest//";
 
     public ActionListener(final SpearContext context) {
         this.context = context;
@@ -234,9 +236,14 @@ public class ActionListener {
             ioClient.disconnect();
         }
         try {
+            //User user = ioClient.get("user");
             final MsgObject msg = JSONObject.parseObject(data, MsgObject.class);
             filename = msg.getFilename();
+            //msg.setFromId(user.getId());
+            //msg.setContent(MsgUtil.readToString(filePath+filename)); //可以设置内容为文件名，可以让对方收到文件名
+            //sender.send(gruTopic,msg);
             System.out.println(filename);
+            //System.out.println(msg.getContentType());
             File file = new File(filePath + filename);
             file.createNewFile();
         } catch (Exception e) {
@@ -247,10 +254,24 @@ public class ActionListener {
 
     @OnEvent("fileblob")
     public void onFileblobHandler(SocketIOClient ioClient, String data, AckRequest ackRequest) throws IOException {
-        System.out.println(data);
         String finalData = new String(data.getBytes("GBK"), "ISO-8859-1");
         MsgUtil.GenerateFile(finalData, filename); //解析成可读文件
-        //MsgUtil.saveFile(new ByteArrayInputStream(finalData.getBytes())); //保存为字符串
+    }
+
+    @OnEvent("fileDownload")
+    public void onFileDownloadHandler(SocketIOClient ioClient,String data, AckRequest ackRequest) throws IOException {
+        logger.debug("准备下载文件，ioClient.getSessionId:{}, msg:{}",ioClient.getSessionId(),data);
+        User user = ioClient.get("user");
+        try {
+            final MsgObject msg = JSONObject.parseObject(data, MsgObject.class);
+            filename = msg.getFilename();
+            msg.setFromId(user.getId());
+            msg.setContent(MsgUtil.readToString(filePath+filename));//可以设置内容为文件名，可以让对方收到文件名MsgUtil.readToString(filePath+filename)
+            System.out.println(msg.getContent());
+            sender.send(gruTopic,msg);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 

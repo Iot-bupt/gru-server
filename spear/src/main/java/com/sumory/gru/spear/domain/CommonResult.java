@@ -33,6 +33,10 @@ public class CommonResult {
         this(success, errorCode, msg, null);
     }
 
+    public CommonResult(boolean success, int senderID){
+        this(success, senderID,null);
+    }
+
     public CommonResult(boolean success, int errorCode, String msg, Map<String, Object> data) {
         super();
         this.success = success;

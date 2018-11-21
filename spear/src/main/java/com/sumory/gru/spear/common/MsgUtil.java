@@ -3,7 +3,10 @@ package com.sumory.gru.spear.common;
 import sun.misc.BASE64Decoder;
 
 import java.io.*;
-import java.util.zip.GZIPOutputStream;
+import java.sql.Blob;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class MsgUtil {
 
@@ -30,7 +33,7 @@ public class MsgUtil {
                 }
             }
 
-            String FilePath = "G://GruFile//" + filename; //文件路径可以随时修改为可保存的路径
+            String FilePath = "E://GruTest//" + filename; //文件路径可以随时修改为可保存的路径
             OutputStream out = new FileOutputStream(FilePath);
             out.write(b);
             out.flush();
@@ -40,6 +43,41 @@ public class MsgUtil {
             return false;
         }
     }
+
+    public static List<String> readToString(String filename) throws IOException{
+        List<String> lines=new ArrayList<String>();
+        BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(filename),"UTF-8"));
+        String line;
+        while ((line = br.readLine()) != null) {
+            lines.add(line);
+        }
+        br.close();
+        return lines;
+    }
+
+    /*
+    public static String readToString(String fileName) {
+        String encoding = "UTF-8";
+        File file = new File(fileName);
+        Long filelength = file.length();
+        byte[] filecontent = new byte[filelength.intValue()];
+        try {
+            FileInputStream in = new FileInputStream(file);
+            in.read(filecontent);
+            in.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            return new String(filecontent, encoding);
+        } catch (UnsupportedEncodingException e) {
+            System.err.println("The OS does not support " + encoding);
+            e.printStackTrace();
+            return null;
+        }
+    }*/
 
     /**
      * 处理前端触发下载请求的方法
