@@ -13,9 +13,14 @@ import com.sumory.gru.common.utils.IdUtil;
 import com.sumory.gru.common.utils.TokenUtil;
 import com.sumory.gru.spear.SpearContext;
 import com.sumory.gru.spear.common.MsgUtil;
+import com.sumory.gru.spear.context.ConnectedContext;
+import com.sumory.gru.spear.context.ResourceContext;
+import com.sumory.gru.spear.context.SpringContext;
+import com.sumory.gru.spear.context.WebrtcContext;
 import com.sumory.gru.spear.domain.*;
 import com.sumory.gru.spear.transport.IReceiver;
 import com.sumory.gru.spear.transport.ISender;
+import com.sumory.gru.spear.webrtc.service.WebrtcService;
 import com.sumory.gru.stat.service.StatService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +29,7 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
 
 public class ActionListener {
     private final Logger logger = LoggerFactory.getLogger(ActionListener.class);
@@ -38,6 +44,7 @@ public class ActionListener {
     private String gruTopic = "gru_topic";
     private static String filename;
     private String filePath = "G://GruFile//";
+    private WebrtcService webrtcService;
 
     public ActionListener(final SpearContext context) {
         this.context = context;
@@ -49,6 +56,10 @@ public class ActionListener {
         this.statService = context.getStatService();
 
         this.receiver.subscribe(gruTopic);
+
+        SpringContext.initSpringContext();
+        webrtcService = (WebrtcService) SpringContext.getBean("webrtcService");
+
     }
 
     /**
@@ -334,7 +345,46 @@ public class ActionListener {
     public void onConnectHandler(SocketIOClient ioClient) {
         ioClient.set("auth", false);
         logger.debug("新用户登录:{}", ioClient.getSessionId());
+        ConnectedContext.addContext(ioClient);
+        Map<String,Object> resource = new HashMap<>();
+        resource.put("screen",false);
+        resource.put("video",true);
+        resource.put("audio",false);
+        ResourceContext.setResource(ioClient.getSessionId().toString(),resource);
     }
+
+    /**
+     * 创建房间
+     * @param ioClient
+     * @param name
+     * @param ackRequest
+     */
+    @OnEvent("create")
+    public void createoom(SocketIOClient ioClient,String name ,AckRequest ackRequest){
+        if(name == null || "".equals(name)){
+            name = UUID.randomUUID().toString().replace("-","").toLowerCase();
+        }
+        Map<String,SocketIOClient> room = WebrtcContext.getRoom(name);
+        if(room != null){
+            ackRequest.sendAckData("taken");
+        }else{
+            webrtcService.join(name,ackRequest,ioClient);
+            ackRequest.sendAckData(null,name);
+        }
+    }
+
+    /**
+     * 加入房间
+     * @param ioClient
+     * @param name
+     * @param ackRequest
+     */
+    @OnEvent("join")
+    public void joinRoom(SocketIOClient ioClient,String name ,AckRequest ackRequest){
+        webrtcService.join(name,ackRequest,ioClient);
+    }
+
+
 
     @OnDisconnect
     public void onDisconnectHandler(SocketIOClient ioClient) {
