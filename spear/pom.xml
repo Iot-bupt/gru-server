@@ -139,6 +139,12 @@
             <artifactId>curator-framework</artifactId>
             <version>1.1.10</version>
         </dependency>
+        <!--线程变量依赖包-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>transmittable-thread-local</artifactId>
+            <version>2.6.1</version>
+        </dependency>
 
 
     </dependencies>
@@ -220,6 +226,7 @@
                         <configuration>
                             <encoding>UTF-8</encoding>
                             <outputDirectory>${project.build.directory}/release/conf</outputDirectory>
+                            <outputDirectory>target/classes/spring</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/resources/spring/</directory>
