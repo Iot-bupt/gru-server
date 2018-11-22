@@ -40,9 +40,6 @@ public class MsgObject {
         this.filename = filename;
     }
 
-    public static MsgContentType TEXT = MsgContentType.TEXT;
-    public static MsgContentType PICTURE = MsgContentType.PICUTURE;
-
     public int getContentType() {
         return contentType;
     }
@@ -51,8 +48,8 @@ public class MsgObject {
         this.contentType = contentType;
     }
 
-    public static MsgContentType AUDIO = MsgContentType.AUDIO;
-    public static MsgContentType VIDIO = MsgContentType.VIDIO;
+    public static MsgContentType BaseMessage = MsgContentType.BaseMessage;
+    public static MsgContentType FileMessage = MsgContentType.FileMessage;
 
 
     public static MsgType UNICAST = MsgType.UNICAST;
@@ -99,11 +96,13 @@ public class MsgObject {
     public static void main(String[] args) {
         MsgObject o = new MsgObject();
         Map<String, Object> target = new HashMap<String, Object>();
+        String filename = "";
         target.put("id", 10);
         target.put("type", 1);
         o.setType(0);
         o.setContent("send");
         o.setTarget(target);
+        o.setFilename(filename);
 
         System.out.println(o);
 

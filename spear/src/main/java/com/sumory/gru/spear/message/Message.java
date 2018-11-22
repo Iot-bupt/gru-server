@@ -8,28 +8,23 @@ import com.alibaba.fastjson.JSONObject;
 public class Message extends BaseMessage {
     private long fromId;//来自谁
     private int msgType;//类型: 1 广播，0 单播给指定target
-    private int MsgContentType;
-
-    public int getMsgContentType() {
-        return MsgContentType;
-    }
-
-    public void setMsgContentType(int msgContentType) {
-        MsgContentType = msgContentType;
-    }
+    private int msgContentType;
 
     private Map<String, Object> target;
     private Object content;
+    private String filename;
 
-    public Message(long id, long fromId, int msgType, Map<String, Object> target,
-                   Object content) {
+    public Message(long id, long fromId, int msgType, int msgContentType, Map<String, Object> target,
+                   Object content,String filename) {
         super(id);
         this.createTime = System.currentTimeMillis();
 
         this.fromId = fromId;
         this.msgType = msgType;
+        this.msgContentType = msgContentType;
         this.target = target;
         this.content = content;
+        this.filename = filename;
     }
 
     public long getFromId() {
@@ -48,6 +43,14 @@ public class Message extends BaseMessage {
         this.msgType = msgType;
     }
 
+    public int getMsgContentType() {
+        return msgContentType;
+    }
+
+    public void setMsgContentType(int msgContentType) {
+        this.msgContentType = msgContentType;
+    }
+
     public Map<String, Object> getTarget() {
         return target;
     }
@@ -62,6 +65,14 @@ public class Message extends BaseMessage {
 
     public void setContent(Object content) {
         this.content = content;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     @Override

@@ -18,8 +18,11 @@ import com.sumory.gru.spear.context.ResourceContext;
 import com.sumory.gru.spear.context.SpringContext;
 import com.sumory.gru.spear.context.WebrtcContext;
 import com.sumory.gru.spear.domain.*;
+import com.sumory.gru.spear.message.FileMessage;
+import com.sumory.gru.spear.message.Message;
 import com.sumory.gru.spear.transport.IReceiver;
 import com.sumory.gru.spear.transport.ISender;
+import com.sumory.gru.spear.webrtc.service.WebrtcService;
 import com.sumory.gru.spear.webrtc.service.WebrtcService;
 import com.sumory.gru.stat.service.StatService;
 import org.slf4j.Logger;
@@ -43,9 +46,8 @@ public class ActionListener {
     private IReceiver receiver;
     private String gruTopic = "gru_topic";
     private static String filename;
-    private String filePath = "G://GruFile//";
+    private String filePath = "E://GruTest//";
     private WebrtcService webrtcService;
-
     public ActionListener(final SpearContext context) {
         this.context = context;
         this.groupMap = context.getGroupMap();
@@ -245,9 +247,14 @@ public class ActionListener {
             ioClient.disconnect();
         }
         try {
+            //User user = ioClient.get("user");
             final MsgObject msg = JSONObject.parseObject(data, MsgObject.class);
             filename = msg.getFilename();
+            //msg.setFromId(user.getId());
+            //msg.setContent(MsgUtil.readToString(filePath+filename)); //可以设置内容为文件名，可以让对方收到文件名
+            //sender.send(gruTopic,msg);
             System.out.println(filename);
+            //System.out.println(msg.getContentType());
             File file = new File(filePath + filename);
             file.createNewFile();
         } catch (Exception e) {
@@ -258,10 +265,40 @@ public class ActionListener {
 
     @OnEvent("fileblob")
     public void onFileblobHandler(SocketIOClient ioClient, String data, AckRequest ackRequest) throws IOException {
-        System.out.println(data);
         String finalData = new String(data.getBytes("GBK"), "ISO-8859-1");
         MsgUtil.GenerateFile(finalData, filename); //解析成可读文件
-        //MsgUtil.saveFile(new ByteArrayInputStream(finalData.getBytes())); //保存为字符串
+    }
+
+    @OnEvent("sendFileSummory")
+    public void onFileSummoryDownloadHandler(SocketIOClient ioClient,String data, AckRequest ackRequest) throws IOException {
+        logger.debug("准备发送文件概要，ioClient.getSessionId:{}, msg:{}",ioClient.getSessionId(),data);
+        User user = ioClient.get("user");
+        try {
+            final MsgObject msg = JSONObject.parseObject(data, MsgObject.class);
+            filename = msg.getFilename();
+            msg.setFromId(user.getId());
+            msg.setContent("");
+            //msg.setContent(MsgUtil.readToString(filePath+filename));//可以设置内容为文件名，可以让对方收到文件名
+            sender.send(gruTopic,msg);
+        }catch (Exception e){
+            e.printStackTrace();
+
+        }
+    }
+
+    @OnEvent("DownloadFile")
+    public void onFileDownloadHandler(SocketIOClient ioClient,String data, AckRequest ackRequest) throws IOException {
+        logger.debug("准备发送文件概要，ioClient.getSessionId:{}, msg:{}",ioClient.getSessionId(),data);
+        User user = ioClient.get("user");
+        try {
+            final MsgObject msg = JSONObject.parseObject(data, MsgObject.class);
+            filename = msg.getFilename();
+            msg.setFromId(user.getId());
+            msg.setContent(MsgUtil.readToString(filePath+filename));//可以设置内容为文件名，可以让对方收到文件名
+            ioClient.sendEvent("fileDownload",msg);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 

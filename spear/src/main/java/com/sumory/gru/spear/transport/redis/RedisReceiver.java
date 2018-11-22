@@ -106,13 +106,14 @@ public class RedisReceiver implements IReceiver {
                 public void run() {
                     try {
                         int msgType = m.getType();//确定单播还是广播
+                        int msgContentType = m.getContentType();//确定是普通消息还是文件消息
                         String targetId = m.getTarget().get("id") + "";
 
                         Map<String, Object> target = new HashMap<String, Object>();
                         target.put("id", targetId);
                         target.put("type", -1);//扩展字段，暂时没用到
-                        Message sm = new Message(0, m.getFromId(), msgType, target, m
-                                .getContent());
+                        Message sm = new Message(0, m.getFromId(), msgType, msgContentType, target, m
+                                .getContent(),m.getFilename());
 
                         if (msgType == MsgObject.BRAODCAST.getValue()) {//群发
                             sendToGroup(targetId, sm);
