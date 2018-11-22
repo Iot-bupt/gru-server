@@ -173,6 +173,5 @@ public class RedisReceiver implements IReceiver {
         }
 
         u.send("msg", msg);
-        System.out.println("RedisReceiver.java发出了消息！");
     }
 }

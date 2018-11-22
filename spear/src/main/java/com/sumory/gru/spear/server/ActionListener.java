@@ -258,17 +258,33 @@ public class ActionListener {
         MsgUtil.GenerateFile(finalData, filename); //解析成可读文件
     }
 
-    @OnEvent("fileDownload")
-    public void onFileDownloadHandler(SocketIOClient ioClient,String data, AckRequest ackRequest) throws IOException {
-        logger.debug("准备下载文件，ioClient.getSessionId:{}, msg:{}",ioClient.getSessionId(),data);
+    @OnEvent("sendFileSummory")
+    public void onFileSummoryDownloadHandler(SocketIOClient ioClient,String data, AckRequest ackRequest) throws IOException {
+        logger.debug("准备发送文件概要，ioClient.getSessionId:{}, msg:{}",ioClient.getSessionId(),data);
         User user = ioClient.get("user");
         try {
             final MsgObject msg = JSONObject.parseObject(data, MsgObject.class);
             filename = msg.getFilename();
             msg.setFromId(user.getId());
-            msg.setContent(MsgUtil.readToString(filePath+filename));//可以设置内容为文件名，可以让对方收到文件名MsgUtil.readToString(filePath+filename)
-            System.out.println(msg.getContent());
+            msg.setContent("");
+            //msg.setContent(MsgUtil.readToString(filePath+filename));//可以设置内容为文件名，可以让对方收到文件名
             sender.send(gruTopic,msg);
+        }catch (Exception e){
+            e.printStackTrace();
+
+        }
+    }
+
+    @OnEvent("DownloadFile")
+    public void onFileDownloadHandler(SocketIOClient ioClient,String data, AckRequest ackRequest) throws IOException {
+        logger.debug("准备发送文件概要，ioClient.getSessionId:{}, msg:{}",ioClient.getSessionId(),data);
+        User user = ioClient.get("user");
+        try {
+            final MsgObject msg = JSONObject.parseObject(data, MsgObject.class);
+            filename = msg.getFilename();
+            msg.setFromId(user.getId());
+            msg.setContent(MsgUtil.readToString(filePath+filename));//可以设置内容为文件名，可以让对方收到文件名
+            ioClient.sendEvent("fileDownload",msg);
         }catch (Exception e){
             e.printStackTrace();
         }

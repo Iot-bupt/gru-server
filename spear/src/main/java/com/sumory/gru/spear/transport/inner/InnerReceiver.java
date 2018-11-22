@@ -165,6 +165,5 @@ public class InnerReceiver implements IReceiver {
         }
 
         u.send("msg", msg);
-        System.out.println("InnerReceiver.java发出了消息！");
     }
 }
