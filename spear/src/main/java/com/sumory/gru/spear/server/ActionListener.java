@@ -259,12 +259,6 @@ public class ActionListener {
         System.out.println(data);
     }
 
-    @OnEvent("fileblob")
-    public void onFileblobHandler(SocketIOClient ioClient, String data, AckRequest ackRequest) throws IOException {
-        //String finalData = new String(data.getBytes("GBK"), "ISO-8859-1");
-        //MsgUtil.GenerateFile(finalData, filename); //解析成可读文件
-    }
-
     @OnEvent("sendFileSummory")
     public void onFileSummoryDownloadHandler(SocketIOClient ioClient,String data, AckRequest ackRequest) throws IOException {
         logger.debug("准备发送文件概要，ioClient.getSessionId:{}, msg:{}",ioClient.getSessionId(),data);
@@ -290,7 +284,7 @@ public class ActionListener {
             final MsgObject msg = JSONObject.parseObject(data, MsgObject.class);
             filename = msg.getFilename();
             msg.setFromId(user.getId());
-            //msg.setContent(MsgUtil.readToString(filePath+filename));//可以设置内容为文件名，可以让对方收到文件名
+            msg.setContent(MsgUtil.readToString(filePath+filename));
             ioClient.sendEvent("fileDownload",msg);
         }catch (Exception e){
             e.printStackTrace();
