@@ -4,6 +4,7 @@ import sun.misc.BASE64Decoder;
 
 import java.io.*;
 import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,12 +22,12 @@ public class MsgUtil {
         bufferedOutputStream.close();
     }
 
-    public static boolean GenerateFile(String imgStr,String filename){
-        if (imgStr == null)
+    public static boolean GenerateFile(String file,String filename) throws SQLException {
+        if (file == null)
             return false;
         BASE64Decoder decoder = new BASE64Decoder();
         try {
-            byte[] b = decoder.decodeBuffer(imgStr);
+            byte[] b = decoder.decodeBuffer(file);
             for (int i = 0; i<b.length;++i){
                 if (b[i] < 0){
                     b[i] +=256;

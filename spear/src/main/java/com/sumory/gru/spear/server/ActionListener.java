@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Blob;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -237,7 +238,7 @@ public class ActionListener {
     }
 
     @OnEvent("filemsg")
-    public void onFileHandler(SocketIOClient ioClient, String data, AckRequest ackRequest) {
+    public void onFileHandler(SocketIOClient ioClient, String data, String dat, AckRequest ackRequest) {
         logger.debug("收到文件，ioClient sessionid:{},msg:{}", ioClient.getSessionId(), data);
         boolean checkResult = checkAuth(ioClient);
         if (!checkResult) {
@@ -245,16 +246,13 @@ public class ActionListener {
             ioClient.disconnect();
         }
         try {
-            //User user = ioClient.get("user");
             final MsgObject msg = JSONObject.parseObject(data, MsgObject.class);
             filename = msg.getFilename();
-            //msg.setFromId(user.getId());
-            //msg.setContent(MsgUtil.readToString(filePath+filename)); //可以设置内容为文件名，可以让对方收到文件名
-            //sender.send(gruTopic,msg);
             System.out.println(filename);
-            //System.out.println(msg.getContentType());
             File file = new File(filePath + filename);
             file.createNewFile();
+            String finalData = new String(dat.getBytes("GBK"), "UTF-8");
+            MsgUtil.GenerateFile(finalData, filename);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -263,8 +261,8 @@ public class ActionListener {
 
     @OnEvent("fileblob")
     public void onFileblobHandler(SocketIOClient ioClient, String data, AckRequest ackRequest) throws IOException {
-        String finalData = new String(data.getBytes("GBK"), "ISO-8859-1");
-        MsgUtil.GenerateFile(finalData, filename); //解析成可读文件
+        //String finalData = new String(data.getBytes("GBK"), "ISO-8859-1");
+        //MsgUtil.GenerateFile(finalData, filename); //解析成可读文件
     }
 
     @OnEvent("sendFileSummory")
@@ -292,7 +290,7 @@ public class ActionListener {
             final MsgObject msg = JSONObject.parseObject(data, MsgObject.class);
             filename = msg.getFilename();
             msg.setFromId(user.getId());
-            msg.setContent(MsgUtil.readToString(filePath+filename));//可以设置内容为文件名，可以让对方收到文件名
+            //msg.setContent(MsgUtil.readToString(filePath+filename));//可以设置内容为文件名，可以让对方收到文件名
             ioClient.sendEvent("fileDownload",msg);
         }catch (Exception e){
             e.printStackTrace();

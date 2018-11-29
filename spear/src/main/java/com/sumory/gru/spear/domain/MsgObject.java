@@ -1,9 +1,11 @@
 package com.sumory.gru.spear.domain;
 
+import java.sql.Blob;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
+import org.omg.CORBA.ObjectHelper;
 
 /**
  * 传输的消息
