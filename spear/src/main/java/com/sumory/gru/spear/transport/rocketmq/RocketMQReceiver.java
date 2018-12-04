@@ -103,13 +103,13 @@ public class RocketMQReceiver implements IReceiver {
      * @param groupId
      * @param msg
      */
-    private void sendToGroup(String groupId, BaseMessage msg) {
+    private void sendToGroup(String groupId, Message msg) {
         logger.info("开始群发, groupId:{} msgId:{}", groupId, msg.getId());
         if (groupId != null) {
-            Group group = this.groupMap.get(groupId);
-            if (group != null)
-                synchronized (group) {
-                    group.broadcast("msg", msg);
+            //Group group = this.groupMap.get(groupId);
+            //if (group != null)
+                synchronized (this) {
+                    Group.broadcast("msg", groupId, msg);
                 }
         }
     }
@@ -121,7 +121,7 @@ public class RocketMQReceiver implements IReceiver {
      * @param userId
      * @param msg
      */
-    private void sendToUser(String userId, BaseMessage msg) {
+    private void sendToUser(String userId, Message msg) {
         logger.info("开始单发, userId:{} msgId:{}", userId, msg.getId());
         if (userId == null)
             return;
