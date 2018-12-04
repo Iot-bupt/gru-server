@@ -37,7 +37,7 @@ public class InnerReceiver implements IReceiver {
     private SpearContext context;
 
     private ConcurrentHashMap<String, Group> groupMap;//groupId - group
-    private ConcurrentHashMap<String, User> userMap;//userId - user
+    private static ConcurrentHashMap<String, User> userMap;//userId - user
     private BlockingQueue<MsgObject> msgQueue;//存放消息的队列
 
     private final ExecutesManager executesManager;
@@ -135,13 +135,13 @@ public class InnerReceiver implements IReceiver {
      * @param groupId
      * @param msg
      */
-    private void sendToGroup(String groupId, BaseMessage msg) {
+    private void sendToGroup(String groupId, Message msg) {
         logger.info("开始群发, groupId:{} msgId:{}", groupId, msg.getId());
         if (groupId != null) {
-            Group group = this.groupMap.get(groupId);
-            if (group != null)
-                synchronized (group) {
-                    group.broadcast("msg", msg);
+            //Group group = this.groupMap.get(groupId);
+            //if (group != null)
+                synchronized (this) {
+                    Group.broadcast("msg", groupId, msg);
                 }
         }
     }
@@ -153,12 +153,12 @@ public class InnerReceiver implements IReceiver {
      * @param userId
      * @param msg
      */
-    private void sendToUser(String userId, Message msg) {
+    public static void sendToUser(String userId, Message msg) {
         logger.info("开始单发, userId:{}  msgId:{}", userId, msg.getFromId());
         if (StringUtils.isBlank(userId))
             return;
 
-        User u = this.userMap.get(userId);
+        User u = InnerReceiver.userMap.get(userId);
         if (u == null || u.getClients() == null) {
             logger.debug("单发消息时无法获取到用户或者用户的clients为空, userId:{}", userId);
             return;
