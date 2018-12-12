@@ -2,10 +2,12 @@ package com.sumory.gru.spear.domain;
 
 import com.corundumstudio.socketio.AckCallback;
 import com.corundumstudio.socketio.SocketIOClient;
+import com.sumory.gru.spear.context.UserContext;
 import com.sumory.gru.spear.extention.IAck;
 import com.sumory.gru.spear.extention.LogAck;
 import com.sumory.gru.spear.extention.RabbitMQAck;
 import com.sumory.gru.spear.message.BaseMessage;
+import com.sumory.gru.spear.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +62,16 @@ public class Client {
 
     //不需要客户端回执
     public void sendWithoutAck(String eventName, BaseMessage msg) {
-        this.ioClient.sendEvent(eventName, msg);
+        //发送webrtc的sdp
+        String userId = UserContext.getUserIdBySessionId(this.ioClient.getSessionId().toString());
+        User user = UserContext.getUser(userId);
+        if(user!=null && "webrtc".equals(user.getName())){
+            Message message = (Message)msg;
+            this.ioClient.sendEvent(eventName, message.getContent());
+        }else{
+            this.ioClient.sendEvent(eventName, msg);
+        }
+
     }
 
     //若需要消息回执，需要使用该方法
