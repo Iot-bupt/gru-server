@@ -13,9 +13,9 @@ import com.sumory.gru.common.utils.IdUtil;
 import com.sumory.gru.common.utils.TokenUtil;
 import com.sumory.gru.spear.SpearContext;
 import com.sumory.gru.spear.common.MsgUtil;
-import com.sumory.gru.spear.context.ConnectedContext;
-import com.sumory.gru.spear.context.ResourceContext;
+import com.sumory.gru.spear.context.RoomContext;
 import com.sumory.gru.spear.context.SpringContext;
+import com.sumory.gru.spear.context.UserContext;
 import com.sumory.gru.spear.context.WebrtcContext;
 import com.sumory.gru.spear.domain.*;
 import com.sumory.gru.spear.transport.IReceiver;
@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Blob;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -372,12 +371,13 @@ public class ActionListener {
     public void onConnectHandler(SocketIOClient ioClient) {
         ioClient.set("auth", false);
         logger.debug("新用户登录:{}", ioClient.getSessionId());
-        ConnectedContext.addContext(ioClient);
-        Map<String,Object> resource = new HashMap<>();
-        resource.put("screen",false);
-        resource.put("video",true);
-        resource.put("audio",false);
-        ResourceContext.setResource(ioClient.getSessionId().toString(),resource);
+        //userMap.put(key, newUser);
+//        ConnectedContext.addContext(ioClient);
+//        Map<String,Object> resource = new HashMap<>();
+//        resource.put("screen",false);
+//        resource.put("video",true);
+//        resource.put("audio",false);
+//        ResourceContext.setResource(ioClient.getSessionId().toString(),resource);
     }
 
     /**
@@ -408,7 +408,27 @@ public class ActionListener {
      */
     @OnEvent("join")
     public void joinRoom(SocketIOClient ioClient,String name ,AckRequest ackRequest){
-        webrtcService.join(name,ackRequest,ioClient);
+        Client newClient = new Client(IdUtil.generateClientId(), ioClient, context.getAck());
+        User newUser = new User(newClient.getId());
+        newUser.setName("webrtc");
+        newUser.addClientToUser(newClient);
+        UserContext.setUser(newUser);
+        webrtcService.join(name,ackRequest,ioClient.getSessionId().toString());
+    }
+
+
+    @OnEvent("exchange")
+    public  void  exchange(SocketIOClient ioClient,String data){
+        net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(data);
+        jsonObject.put("from",UserContext.getUserIdBySessionId(ioClient.getSessionId().toString()));
+        MsgObject msgObject = new MsgObject();
+        msgObject.setFromId(Long.parseLong(UserContext.getUserIdBySessionId(ioClient.getSessionId().toString())));
+        msgObject.setType(MsgObject.UNICAST.getValue());
+        Map<String,Object> target = new HashMap<>();
+        target.put("id",jsonObject.get("to"));
+        msgObject.setTarget(target);
+        msgObject.setContent(jsonObject);
+        sender.send(gruTopic, msgObject);
     }
 
 
@@ -420,6 +440,9 @@ public class ActionListener {
         if (u != null) {
             synchronized (u) {
                 if (u != null) {
+                    String userId = UserContext.getUserIdBySessionId(ioClient.getSessionId().toString());
+                    UserContext.removeUser(userId);
+                    RoomContext.leaveRoom(userId);
                     logger.debug("用户:{} sessionId:{} 退出", u.getId(), ioClient.getSessionId());
                     u.removeClientFromUser(ioClient);
                     if (u.getClients().isEmpty()) {//如果user已经没有client连接了，说明user已经完全退出
