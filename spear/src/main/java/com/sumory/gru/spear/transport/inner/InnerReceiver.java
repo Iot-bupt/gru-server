@@ -1,28 +1,20 @@
 package com.sumory.gru.spear.transport.inner;
 
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import com.sumory.gru.spear.common.MsgUtil;
-import com.sumory.gru.spear.server.ActionListener;
+import com.sumory.gru.spear.SpearContext;
+import com.sumory.gru.spear.context.UserContext;
+import com.sumory.gru.spear.domain.Group;
+import com.sumory.gru.spear.domain.MsgObject;
+import com.sumory.gru.spear.domain.User;
+import com.sumory.gru.spear.message.Message;
+import com.sumory.gru.spear.thread.ExecutesManager;
+import com.sumory.gru.spear.transport.IReceiver;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sumory.gru.spear.SpearContext;
-import com.sumory.gru.spear.domain.Group;
-import com.sumory.gru.spear.domain.MsgObject;
-import com.sumory.gru.spear.domain.User;
-import com.sumory.gru.spear.message.BaseMessage;
-import com.sumory.gru.spear.message.Message;
-import com.sumory.gru.spear.thread.ExecutesManager;
-import com.sumory.gru.spear.transport.IReceiver;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * 单节点时接受器
@@ -159,6 +151,10 @@ public class InnerReceiver implements IReceiver {
             return;
 
         User u = InnerReceiver.userMap.get(userId);
+        //从webrtc客户端登陆的用户中获取
+        if (u == null){
+            u = UserContext.getUser(userId);
+        }
         if (u == null || u.getClients() == null) {
             logger.debug("单发消息时无法获取到用户或者用户的clients为空, userId:{}", userId);
             return;
