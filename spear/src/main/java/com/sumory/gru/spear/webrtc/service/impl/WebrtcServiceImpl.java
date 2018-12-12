@@ -1,7 +1,6 @@
 package com.sumory.gru.spear.webrtc.service.impl;
 
 
-
 import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.sumory.gru.spear.context.ResourceContext;
@@ -31,8 +30,23 @@ public class WebrtcServiceImpl implements WebrtcService {
             }else {
                 WebrtcContext.leaveRoom(ioClient.getSessionId().toString());
             }
-            ackRequest.sendAckData(null,describeroom(name));
+            Map<String, Map<String, Map<String, Object>>> clients = describeroom(name);
+            if(clients.get("clients").size() !=0){
+                ackRequest.sendAckData(null,describeroom(name));
+            }else{
+                ackRequest.sendAckData(null,name);
+            }
             WebrtcContext.joinRoom(name,ioClient);
+        }
+    }
+
+    @Override
+    public void join(String name, AckRequest ackRequest,String userId) {
+        List<String> room = RoomContext.getRoom(name);
+        if(room == null){
+            RoomContext.setRoom(userId,name);
+        }else {
+            ackRequest.sendAckData(room);
         }
     }
 
