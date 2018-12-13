@@ -1,15 +1,16 @@
 package com.sumory.gru.spear.domain;
 
-import java.util.Iterator;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
+import com.alibaba.fastjson.JSONObject;
+import com.sumory.gru.spear.context.RoomContext;
+import com.sumory.gru.spear.context.UserContext;
+import com.sumory.gru.spear.message.Message;
 import com.sumory.gru.spear.transport.inner.InnerReceiver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSONObject;
-import com.sumory.gru.spear.message.BaseMessage;
-import com.sumory.gru.spear.message.Message;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * 群组：用于包含一坨用户
@@ -50,35 +51,48 @@ public class Group {
                 u.send(eventName, msg);
             }
             */
-            //changed
-            ConcurrentLinkedQueue<String> UserQueue = new ConcurrentLinkedQueue<>();
-            String[] UserArray160 = {"201","202","204","205","206","207"};
-            String[] UserArray170 = {"201","205","206","207"};
-            String[] UserArray180 = {"201","203","204","206","207"};
-            String[] UserArray190 = {"201","202","203","204","205","207"};
-            int ID = Integer.parseInt(uniqId);
-            if (ID == 160) {
-                for (int i=0; i<UserArray160.length; i++) {
-                    UserQueue.add(UserArray160[i]);
+
+            if("leave".equals(eventName)){
+                List<String> room = RoomContext.getRoom(uniqId);
+                for (String userId:room) {
+                    User user = UserContext.getUser(userId);
+                    if(user!=null){
+                        user.send("leave",msg);
+                    }
                 }
-            } else if (ID == 170) {
-                for (int i=0; i<UserArray170.length; i++) {
-                    UserQueue.add(UserArray170[i]);
+
+            }else{
+                //changed
+                ConcurrentLinkedQueue<String> UserQueue = new ConcurrentLinkedQueue<>();
+                String[] UserArray160 = {"201","202","204","205","206","207"};
+                String[] UserArray170 = {"201","205","206","207"};
+                String[] UserArray180 = {"201","203","204","206","207"};
+                String[] UserArray190 = {"201","202","203","204","205","207"};
+                int ID = Integer.parseInt(uniqId);
+                if (ID == 160) {
+                    for (int i=0; i<UserArray160.length; i++) {
+                        UserQueue.add(UserArray160[i]);
+                    }
+                } else if (ID == 170) {
+                    for (int i=0; i<UserArray170.length; i++) {
+                        UserQueue.add(UserArray170[i]);
+                    }
+                } else if (ID == 180) {
+                    for (int i=0; i<UserArray180.length; i++) {
+                        UserQueue.add(UserArray180[i]);
+                    }
+                } else if (ID == 190) {
+                    for (int i=0; i<UserArray190.length; i++) {
+                        UserQueue.add(UserArray190[i]);
+                    }
                 }
-            } else if (ID == 180) {
-                for (int i=0; i<UserArray180.length; i++) {
-                    UserQueue.add(UserArray180[i]);
+                Iterator<String> iterator = UserQueue.iterator();
+                while (iterator.hasNext()) {
+                    InnerReceiver.sendToUser(iterator.next(), msg);
                 }
-            } else if (ID == 190) {
-                for (int i=0; i<UserArray190.length; i++) {
-                    UserQueue.add(UserArray190[i]);
-                }
+                //changed
             }
-            Iterator<String> iterator = UserQueue.iterator();
-            while (iterator.hasNext()) {
-                InnerReceiver.sendToUser(iterator.next(), msg);
-            }
-            //changed
+
         }
         catch (Exception e) {
             logger.error("群发异常, groupId:{}", uniqId, e);
