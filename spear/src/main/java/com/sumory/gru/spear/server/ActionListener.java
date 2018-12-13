@@ -416,21 +416,23 @@ public class ActionListener {
         webrtcService.join(name,ackRequest,ioClient.getSessionId().toString());
     }
 
-    /**
-     *
-     * @param ioClient
-     */
-    @OnEvent("leave")
     public void disconnect(SocketIOClient ioClient){
         String userId = UserContext.getUserIdBySessionId(ioClient.getSessionId().toString());
-        String room = RoomContext.getRoomNameByUserId(userId);
-        MsgObject msgObject = new MsgObject();
-        Map<String,Object> target = new HashMap<>();
-        target.put("id",room);
-        msgObject.setTarget(target);
-        msgObject.setContent(userId);
-        msgObject.setContentType(MsgObject.BRAODCAST.getValue());
-        sender.send(gruTopic, msgObject);
+        if(userId != null){
+            RoomContext.leaveRoom(userId);
+            String room = RoomContext.getRoomNameByUserId(userId);
+            if(!"".equals(room)){
+                MsgObject msgObject = new MsgObject();
+                Map<String,Object> target = new HashMap<>();
+                target.put("id",room);
+                msgObject.setTarget(target);
+                msgObject.setContent(userId);
+                msgObject.setType(MsgObject.BRAODCAST.getValue());
+                sender.send(gruTopic, msgObject);
+            }
+
+        }
+
     }
 
     /**
@@ -462,6 +464,7 @@ public class ActionListener {
 
     @OnDisconnect
     public void onDisconnectHandler(SocketIOClient ioClient) {
+        disconnect(ioClient);
         ioClient.set("auth", false);
         User u = ioClient.get("user");
         if (u != null) {
