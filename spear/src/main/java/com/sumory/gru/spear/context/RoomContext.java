@@ -62,4 +62,21 @@ public class RoomContext {
          }
 
      }
+
+    /**
+     *
+     * @param userId
+     * @return
+     */
+
+     public static String getRoomNameByUserId(String userId){
+         if(room!=null){
+             for (String key:room.keySet()){
+                 if(room.get(key).contains(userId)){
+                     return key;
+                 }
+             }
+         }
+         return "";
+     }
 }
