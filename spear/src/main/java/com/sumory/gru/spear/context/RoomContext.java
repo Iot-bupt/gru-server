@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * webrtc 创建的房间
  */
 public class RoomContext {
-    private  static  Map<String,List<String>> room = new ConcurrentHashMap<>();
+    private  static  Map<String,List<String>> room = new HashMap<>();
     public  static  List<String> getRoom(String sessionId){
        // Map<String,List<String>> rmap = room.get();
         if(room == null){
