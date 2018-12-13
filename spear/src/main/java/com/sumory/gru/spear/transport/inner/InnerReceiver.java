@@ -1,6 +1,7 @@
 package com.sumory.gru.spear.transport.inner;
 
 import com.sumory.gru.spear.SpearContext;
+import com.sumory.gru.spear.context.RoomContext;
 import com.sumory.gru.spear.context.UserContext;
 import com.sumory.gru.spear.domain.Group;
 import com.sumory.gru.spear.domain.MsgObject;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
@@ -132,9 +134,14 @@ public class InnerReceiver implements IReceiver {
         if (groupId != null) {
             //Group group = this.groupMap.get(groupId);
             //if (group != null)
+            if(RoomContext.getRoom(groupId)!=null){
+                Group.broadcast("leave", groupId, msg);
+            }else{
                 synchronized (this) {
                     Group.broadcast("msg", groupId, msg);
                 }
+            }
+
         }
     }
 
