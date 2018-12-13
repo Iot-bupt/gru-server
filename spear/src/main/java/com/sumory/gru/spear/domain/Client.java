@@ -53,11 +53,12 @@ public class Client {
     }
 
     public void send(String eventName, BaseMessage msg) {
-        if (this.needAck) {
-            this.sendWithAck(eventName, msg);
-        } else {
-            this.sendWithoutAck(eventName, msg);
-        }
+//        if (this.needAck) {
+//            this.sendWithAck(eventName, msg);
+//        } else {
+//            this.sendWithoutAck(eventName, msg);
+//        }
+        this.sendWithoutAck(eventName, msg);
     }
 
     //不需要客户端回执
