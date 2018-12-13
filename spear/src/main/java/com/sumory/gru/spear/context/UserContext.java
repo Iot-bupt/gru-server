@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * webrtc登陆用户
  */
 public class UserContext {
-    private  static  Map<String,User> userMap = new ConcurrentHashMap();
+    private  static  Map<String,User> userMap = new HashMap<>();
 
     public static  void setUser(User user){
         //Map<String,User> usrmap = userMap.get();

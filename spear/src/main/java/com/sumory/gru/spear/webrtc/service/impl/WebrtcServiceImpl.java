@@ -48,13 +48,12 @@ public class WebrtcServiceImpl implements WebrtcService {
     public void join(String name, AckRequest ackRequest,String sessionId) {
         List<String> room = RoomContext.getRoom(name);
         JSONArray array = new JSONArray();
-        if(room == null){
-            RoomContext.setRoom(UserContext.getUserIdBySessionId(sessionId),name);
-        }else {
+        if(room != null){
             for (int i = 0 ;i< room.size();i++){
                 array.add(room.get(i));
             }
         }
+        RoomContext.setRoom(UserContext.getUserIdBySessionId(sessionId),name);
         JSONObject result = new JSONObject();
         result.put("data",array);
         System.out.println(result.toString());

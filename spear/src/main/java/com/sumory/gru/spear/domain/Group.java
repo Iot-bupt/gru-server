@@ -54,12 +54,16 @@ public class Group {
 
             if("leave".equals(eventName)){
                 List<String> room = RoomContext.getRoom(uniqId);
-                for (String userId:room) {
-                    User user = UserContext.getUser(userId);
-                    if(user!=null){
-                        user.send("leave",msg);
+                if (room !=null && room.size() > 0){
+                    for (int i =0; i< room.size();i++) {
+                        String userId = room.get(i);
+                        User user = UserContext.getUser(userId);
+                        if(user!=null){
+                            user.send("leave",msg);
+                        }
                     }
                 }
+
 
             }else{
                 //changed
