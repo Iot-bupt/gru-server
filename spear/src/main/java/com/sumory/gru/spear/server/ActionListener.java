@@ -392,7 +392,7 @@ public class ActionListener {
      * @param ackRequest
      */
     @OnEvent("create")
-    public void createoom(SocketIOClient ioClient,String name ,AckRequest ackRequest){
+    public void createRoom(SocketIOClient ioClient,String name ,AckRequest ackRequest){
         if(name == null || "".equals(name)){
             name = UUID.randomUUID().toString().replace("-","").toLowerCase();
         }
