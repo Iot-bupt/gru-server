@@ -371,6 +371,11 @@ public class ActionListener {
     public void onConnectHandler(SocketIOClient ioClient) {
         ioClient.set("auth", false);
         logger.debug("新用户登录:{}", ioClient.getSessionId());
+        Client newClient = new Client(IdUtil.generateClientId(), ioClient, context.getAck());
+        User newUser = new User(newClient.getId());
+        newUser.setName("webrtc");
+        newUser.addClientToUser(newClient);
+        UserContext.setUser(newUser);
         //userMap.put(key, newUser);
 //        ConnectedContext.addContext(ioClient);
 //        Map<String,Object> resource = new HashMap<>();
@@ -408,11 +413,6 @@ public class ActionListener {
      */
     @OnEvent("join")
     public void joinRoom(SocketIOClient ioClient,String name ,AckRequest ackRequest){
-        Client newClient = new Client(IdUtil.generateClientId(), ioClient, context.getAck());
-        User newUser = new User(newClient.getId());
-        newUser.setName("webrtc");
-        newUser.addClientToUser(newClient);
-        UserContext.setUser(newUser);
         webrtcService.join(name,ackRequest,ioClient.getSessionId().toString());
     }
 

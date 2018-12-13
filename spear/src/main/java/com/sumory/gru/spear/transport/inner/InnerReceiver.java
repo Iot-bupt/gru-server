@@ -149,17 +149,18 @@ public class InnerReceiver implements IReceiver {
         logger.info("开始单发, userId:{}  msgId:{}", userId, msg.getFromId());
         if (StringUtils.isBlank(userId))
             return;
-
+        String msginfo = "msg";
         User u = InnerReceiver.userMap.get(userId);
         //从webrtc客户端登陆的用户中获取
         if (u == null){
             u = UserContext.getUser(userId);
+            msginfo = "exchange";
         }
         if (u == null || u.getClients() == null) {
             logger.debug("单发消息时无法获取到用户或者用户的clients为空, userId:{}", userId);
             return;
         }
 
-        u.send("msg", msg);
+        u.send(msginfo, msg);
     }
 }

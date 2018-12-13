@@ -6,41 +6,39 @@ import com.sumory.gru.spear.domain.User;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * webrtc登陆用户
  */
 public class UserContext {
-    private  static  ThreadLocal<Map<String,User>> userMap = new TransmittableThreadLocal<Map<String,User>>(){
-        protected  Map<String,User> initiaValue(){
-            return new HashMap<>();
-        }
-    };
+    private  static  Map<String,User> userMap = new ConcurrentHashMap();
+
     public static  void setUser(User user){
-        Map<String,User> usrmap = userMap.get();
-        if(usrmap == null){
-            usrmap = new HashMap<>();
-            usrmap.put(user.getId()+"",user);
-            userMap.set(usrmap);
+        //Map<String,User> usrmap = userMap.get();
+        if(userMap == null){
+            userMap = new HashMap<>();
+            userMap.put(user.getId()+"",user);
+          //  userMap.set(usrmap);
         }else{
-            if(!usrmap.containsKey(user.getId()+"")){
-                usrmap.put(user.getId()+"",user);
+            if(!userMap.containsKey(user.getId()+"")){
+                userMap.put(user.getId()+"",user);
             }
         }
     }
     public  static  User getUser(String userId){
-        Map<String,User> usrmap = userMap.get();
-        if(usrmap == null){
+        //Map<String,User> usrmap = userMap.get();
+        if(userMap == null){
             return  null;
         }
-        return usrmap.get(userId);
+        return userMap.get(userId);
     }
 
     public  static  void removeUser(String userId){
-        Map<String,User> usrmap = userMap.get();
-        if(usrmap != null && usrmap.containsKey(userId)){
-           usrmap.remove(userId);
+        //Map<String,User> usrmap = userMap.get();
+        if(userMap != null && userMap.containsKey(userId)){
+            userMap.remove(userId);
         }
 
     }
@@ -51,15 +49,15 @@ public class UserContext {
      * @return
      */
     public static String getUserIdBySessionId(String sessionId){
-        Map<String,User> usrmap = userMap.get();
-        if(usrmap == null){
+        //Map<String,User> usrmap = userMap.get();
+        if(userMap == null){
             return  null;
         }
-        for (String key : usrmap.keySet()){
-            User user = usrmap.get(key);
+        for (String key : userMap.keySet()){
+            User user = userMap.get(key);
             ConcurrentLinkedQueue<Client> clients = user.getClients();
             for (Client client:clients){
-                if (sessionId.equals(client.getUuid())){
+                if (sessionId.equals(client.getUuid().toString())){
                     return user.getId()+"";
                 }
             }

@@ -5,10 +5,14 @@ import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.sumory.gru.spear.context.ResourceContext;
 import com.sumory.gru.spear.context.RoomContext;
+import com.sumory.gru.spear.context.UserContext;
 import com.sumory.gru.spear.context.WebrtcContext;
 import com.sumory.gru.spear.webrtc.service.WebrtcService;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,13 +45,20 @@ public class WebrtcServiceImpl implements WebrtcService {
     }
 
     @Override
-    public void join(String name, AckRequest ackRequest,String userId) {
+    public void join(String name, AckRequest ackRequest,String sessionId) {
         List<String> room = RoomContext.getRoom(name);
+        JSONArray array = new JSONArray();
         if(room == null){
-            RoomContext.setRoom(userId,name);
+            RoomContext.setRoom(UserContext.getUserIdBySessionId(sessionId),name);
         }else {
-            ackRequest.sendAckData(room);
+            for (int i = 0 ;i< room.size();i++){
+                array.add(room.get(i));
+            }
         }
+        JSONObject result = new JSONObject();
+        result.put("data",array);
+        System.out.println(result.toString());
+        ackRequest.sendAckData(result);
     }
 
     @Override
