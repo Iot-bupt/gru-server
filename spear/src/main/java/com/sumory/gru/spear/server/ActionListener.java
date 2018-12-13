@@ -416,11 +416,38 @@ public class ActionListener {
         webrtcService.join(name,ackRequest,ioClient.getSessionId().toString());
     }
 
+    /**
+     *
+     * @param ioClient
+     */
+    @OnEvent("leave")
+    public void disconnect(SocketIOClient ioClient){
+        String userId = UserContext.getUserIdBySessionId(ioClient.getSessionId().toString());
+        String room = RoomContext.getRoomNameByUserId(userId);
+        MsgObject msgObject = new MsgObject();
+        Map<String,Object> target = new HashMap<>();
+        target.put("id",room);
+        msgObject.setTarget(target);
+        msgObject.setContent(userId);
+        msgObject.setContentType(MsgObject.BRAODCAST.getValue());
+        sender.send(gruTopic, msgObject);
+    }
 
+    /**
+     *
+     * @param ioClient
+     * @param data
+     */
     @OnEvent("exchange")
     public  void  exchange(SocketIOClient ioClient,String data){
         net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(data);
         jsonObject.put("from",UserContext.getUserIdBySessionId(ioClient.getSessionId().toString()));
+//        String to = jsonObject.get("to").toString();
+//        User user = UserContext.getUser(to);
+//        ConcurrentLinkedQueue<Client> clients = user.getClients();
+//        for (Client client:clients) {
+//            client.send("exchange",jsonObject);
+//        }
         MsgObject msgObject = new MsgObject();
         msgObject.setFromId(Long.parseLong(UserContext.getUserIdBySessionId(ioClient.getSessionId().toString())));
         msgObject.setType(MsgObject.UNICAST.getValue());
