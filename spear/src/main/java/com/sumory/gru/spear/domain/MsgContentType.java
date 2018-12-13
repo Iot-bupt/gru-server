@@ -1,7 +1,7 @@
 package com.sumory.gru.spear.domain;
 
 public enum MsgContentType {
-    BaseMessage(0), FileMessage(1);
+    BaseMessage(0), FileMessage(1), VoiceMessage(2);
 
     private int value;
 

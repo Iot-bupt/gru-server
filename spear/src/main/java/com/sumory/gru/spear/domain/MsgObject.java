@@ -52,6 +52,7 @@ public class MsgObject {
 
     public static MsgContentType BaseMessage = MsgContentType.BaseMessage;
     public static MsgContentType FileMessage = MsgContentType.FileMessage;
+    public static MsgContentType VoiceMessage = MsgContentType.VoiceMessage;
 
 
     public static MsgType UNICAST = MsgType.UNICAST;

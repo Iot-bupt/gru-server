@@ -45,7 +45,8 @@ public class SpearMain {
         final SpearServer spearServer;
 
         try {
-            if (DEFAULT_MODE.equals(config.get("mode"))) {//最小化部署single模式时使用本地实现的两个service
+            String mode = config.get("mode");
+            if (DEFAULT_MODE.equals(mode)) {//最小化部署single模式时使用本地实现的两个service
                 idService = new InnerIdService();
                 //最小化模式不提供stat服务，所以这个接口没有具体实现，后面也不会被调用到
                 statService = new InnerStatService();

@@ -246,6 +246,10 @@ public class ActionListener {
         }
         try {
             final MsgObject msg = JSONObject.parseObject(data, MsgObject.class);
+            if (msg.getContentType() == 2 && msg.getFilename() == null){
+                msg.setContent(dat);
+                sender.send(gruTopic,msg);
+            }
             filename = msg.getFilename();
             System.out.println(filename);
             File file = new File(filePath + filename);
@@ -392,7 +396,7 @@ public class ActionListener {
      * @param ackRequest
      */
     @OnEvent("create")
-    public void createoom(SocketIOClient ioClient,String name ,AckRequest ackRequest){
+    public void createRoom(SocketIOClient ioClient,String name ,AckRequest ackRequest){
         if(name == null || "".equals(name)){
             name = UUID.randomUUID().toString().replace("-","").toLowerCase();
         }

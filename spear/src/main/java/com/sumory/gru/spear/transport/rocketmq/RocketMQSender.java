@@ -26,9 +26,9 @@ public class RocketMQSender implements ISender {
 
     public RocketMQSender(final SpearContext context) {
         this.context = context;
-        this.idService = context.getIdService();
+        this.idService = this.context.getIdService();
         //创建mq producer
-        String mqNamesrvAddr = context.getConfig().get("mq.server.addr");
+        String mqNamesrvAddr = this.context.getConfig().get("mq.server.addr");
         this.producer = new DefaultMQProducer("SpearProducer");
         producer.setNamesrvAddr(mqNamesrvAddr);
     }
