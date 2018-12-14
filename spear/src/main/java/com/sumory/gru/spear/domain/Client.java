@@ -64,9 +64,7 @@ public class Client {
     //不需要客户端回执
     public void sendWithoutAck(String eventName, BaseMessage msg) {
         //发送webrtc的sdp
-        String userId = UserContext.getUserIdBySessionId(this.ioClient.getSessionId().toString());
-        User user = UserContext.getUser(userId);
-        if(user!=null && "webrtc".equals(user.getName())){
+        if("exchange".equals(eventName)){
             Message message = (Message)msg;
             this.ioClient.sendEvent(eventName, message.getContent());
         }else{
