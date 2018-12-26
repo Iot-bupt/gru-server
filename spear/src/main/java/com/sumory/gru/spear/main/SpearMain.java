@@ -52,9 +52,9 @@ public class SpearMain {
                 statService = new InnerStatService();
             } else {//开启了集群模式服务
                 ApplicationContext appContext = new ClassPathXmlApplicationContext(new String[]{
-                        "applicationContext.xml",
-                        "applicationContext-consumer-idgen.xml",
-                        "applicationContext-consumer-stat.xml"});
+                        "spring/applicationContext.xml",
+                        "spring/applicationContext-consumer-idgen.xml",
+                        "spring/applicationContext-consumer-stat.xml"});
                 idService = (IdService) appContext.getBean("idService");
                 statService = (StatService) appContext.getBean("statService");
             }
