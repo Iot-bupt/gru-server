@@ -195,6 +195,7 @@
                         <configuration>
                             <encoding>UTF-8</encoding>
                             <outputDirectory>${project.build.directory}/release/conf</outputDirectory>
+                            <outputDirectory>target/classes</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/resources/profiles/${profiles.active}/</directory>
@@ -214,6 +215,7 @@
                         <configuration>
                             <encoding>UTF-8</encoding>
                             <outputDirectory>${project.build.directory}/release/conf</outputDirectory>
+                            <outputDirectory>target/classes/spring</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/resources/spring/</directory>
