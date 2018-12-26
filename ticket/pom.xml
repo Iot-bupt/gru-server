@@ -144,6 +144,7 @@
 						<configuration>
 							<encoding>UTF-8</encoding>
 							<outputDirectory>${project.build.directory}/release/conf</outputDirectory>
+							<outputDirectory>target/classes</outputDirectory>
 							<resources>
 								<resource>
 									<directory>src/main/resources/profiles/${profiles.active}/</directory>
