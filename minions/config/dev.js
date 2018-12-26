@@ -13,7 +13,7 @@ module.exports = {
     sessionSecret: 'session_secret_random_seed',
 
     //redis config
-    redis: {"address": "192.168.100.185", "port": "6379", "passwd": ""},
+    redis: {"address": "172.30.62.5", "port": "6379", "passwd": ""},
 
     //不需要过滤是否登陆状态的白名单
     whitelist: [
@@ -23,10 +23,10 @@ module.exports = {
     ],
 
     zk: {
-        addr: "192.168.100.183:2181",
+        addr: "172.30.62.6:2181",
         spears: "/spearnodes_dev"
     },
 
-    statServer: "http://192.168.100.122:50000"
+    statServer: "http://127.0.0.1:50000"
 
 };
