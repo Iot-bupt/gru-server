@@ -11,17 +11,6 @@ import java.util.List;
 
 public class MsgUtil {
 
-    public static void saveFile(InputStream inputStream) throws IOException{
-        BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File("G://test.gif")));
-        byte[] bytes = new byte[1024];
-        while (bufferedInputStream.read(bytes) != -1){
-            bufferedOutputStream.write(bytes,0,1000);
-        }
-        bufferedInputStream.close();
-        bufferedOutputStream.close();
-    }
-
     public static boolean GenerateFile(String file,String filename) throws SQLException {
         if (file == null)
             return false;
