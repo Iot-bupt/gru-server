@@ -44,7 +44,7 @@ public class ActionListener {
     private IReceiver receiver;
     private String gruTopic = "gru_topic";
     private static String filename;
-    private String filePath = "E://GruTest//";
+    private String filePath = "/home/file/";
     private WebrtcService webrtcService;
     public ActionListener(final SpearContext context) {
         this.context = context;
