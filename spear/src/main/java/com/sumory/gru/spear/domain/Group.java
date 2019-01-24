@@ -52,7 +52,7 @@ public class Group {
         int Id = Integer.parseInt(chatGroupId);
         ConcurrentLinkedQueue<String> UserQueue = new ConcurrentLinkedQueue<>();
         try {
-            URL url = new URL("http://10.112.17.185:8086/api/v1/user/userByGroupId?chatGroupId="+Id);
+            URL url = new URL(Config.getConfig().get("info-backend-zyf")+Id);
             URLConnection connection = url.openConnection();
             connection.connect();
             read = new BufferedReader(new InputStreamReader(
