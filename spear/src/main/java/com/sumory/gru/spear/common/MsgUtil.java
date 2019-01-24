@@ -7,6 +7,7 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import com.sumory.gru.common.config.Config;
 
 
 public class MsgUtil {
@@ -23,7 +24,7 @@ public class MsgUtil {
                 }
             }
 
-            String FilePath = "E://GruTest//" + filename; //文件路径可以随时修改为可保存的路径
+            String FilePath = Config.getConfig().get("filepath") + filename; //文件路径可以随时修改为可保存的路径
             OutputStream out = new FileOutputStream(FilePath);
             out.write(b);
             out.flush();
