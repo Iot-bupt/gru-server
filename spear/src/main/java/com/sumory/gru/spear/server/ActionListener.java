@@ -70,22 +70,22 @@ public class ActionListener {
      * @author sumory.wu @date 2015年4月22日 下午5:51:18
      */
     private boolean auth(AuthObject authObject) {
-        logger.debug("鉴权");
-        if (authObject.getId() == 0) {
-            logger.error("鉴权失败，参数错误", authObject);
-            return false;
-        }
-
-        if ("true".equals(this.config.get("auth.open"))) {
-            String inputParams = authObject.getId() + "_" + authObject.getName() + "_" + authObject.getAppType();
-            String genToken1 = TokenUtil.genToken(inputParams, config.get("salt.toticket"));
-            String genToken2 = TokenUtil.genToken(inputParams + "_" + authObject.getToken1(), config.get("salt.tospear"));
-            if (!authObject.getToken1().equals(genToken1) || !authObject.getToken2().equals(genToken2)) {
-                logger.error("鉴权失败{}", authObject);
-                return false;
-            }
-        }
-        logger.debug("鉴权通过");
+//        logger.debug("鉴权");
+//        if (authObject.getId() == 0) {
+//            logger.error("鉴权失败，参数错误", authObject);
+//            return false;
+//        }
+//
+//        if ("true".equals(this.config.get("auth.open"))) {
+//            String inputParams = authObject.getId() + "_" + authObject.getName() + "_" + authObject.getAppType();
+//            String genToken1 = TokenUtil.genToken(inputParams, config.get("salt.toticket"));
+//            String genToken2 = TokenUtil.genToken(inputParams + "_" + authObject.getToken1(), config.get("salt.tospear"));
+//            if (!authObject.getToken1().equals(genToken1) || !authObject.getToken2().equals(genToken2)) {
+//                logger.error("鉴权失败{}", authObject);
+//                return false;
+//            }
+//        }
+//        logger.debug("鉴权通过");
         return true;
     }
 
