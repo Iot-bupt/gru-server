@@ -7,20 +7,10 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import com.sumory.gru.common.config.Config;
 
 
 public class MsgUtil {
-
-    public static void saveFile(InputStream inputStream) throws IOException{
-        BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File("G://test.gif")));
-        byte[] bytes = new byte[1024];
-        while (bufferedInputStream.read(bytes) != -1){
-            bufferedOutputStream.write(bytes,0,1000);
-        }
-        bufferedInputStream.close();
-        bufferedOutputStream.close();
-    }
 
     public static boolean GenerateFile(String file,String filename) throws SQLException {
         if (file == null)
@@ -34,7 +24,7 @@ public class MsgUtil {
                 }
             }
 
-            String FilePath = "E://GruTest//" + filename; //文件路径可以随时修改为可保存的路径
+            String FilePath = Config.getConfig().get("filepath") + filename; //文件路径可以随时修改为可保存的路径
             OutputStream out = new FileOutputStream(FilePath);
             out.write(b);
             out.flush();
