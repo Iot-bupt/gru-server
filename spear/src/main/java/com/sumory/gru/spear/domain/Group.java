@@ -1,6 +1,7 @@
 package com.sumory.gru.spear.domain;
 
 import com.alibaba.fastjson.JSONObject;
+import com.sumory.gru.common.config.Config;
 import com.sumory.gru.spear.context.RoomContext;
 import com.sumory.gru.spear.context.UserContext;
 import com.sumory.gru.spear.message.Message;
