@@ -25,7 +25,7 @@ JAVA_OPTS=" -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true "
 JAVA_JMX_OPTS=""
 
 
-JAVA_MEM_OPTS=" -server -Xmx5g -Xms5g -Xmn2048m -XX:PermSize=128m -Xss256k -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+UseCMSCompactAtFullCollection -XX:LargePageSizeInBytes=128m -XX:+UseFastAccessorMethods -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70 "
+JAVA_MEM_OPTS=" -server -Xmx5g -Xms5g -Xmn2048m -XX:MetaspaceSize=128m -Xss256k -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+UseCMSCompactAtFullCollection -XX:LargePageSizeInBytes=128m -XX:+UseFastAccessorMethods -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70 "
 
 
 echo -e "Starting the $SERVER_NAME ...\c"
