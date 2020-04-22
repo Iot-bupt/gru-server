@@ -213,7 +213,6 @@
                         <configuration>
                             <encoding>UTF-8</encoding>
                             <outputDirectory>${project.build.directory}/release/conf</outputDirectory>
-                            <outputDirectory>target/classes</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/resources/profiles/${profiles.active}/</directory>
@@ -233,7 +232,6 @@
                         <configuration>
                             <encoding>UTF-8</encoding>
                             <outputDirectory>${project.build.directory}/release/conf</outputDirectory>
-                            <outputDirectory>target/classes/spring</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/resources/spring/</directory>
@@ -305,6 +303,26 @@
             </plugin>
 
         </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <mainClass>com.sumory.gru.spear.main.SpearMain</mainClass>
+                                <addClasspath>true</addClasspath>
+                                <classpathPrefix>lib/</classpathPrefix>
+                            </manifest>
+                        </archive>
+                        <classesDirectory>
+                        </classesDirectory>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
 
         <!-- 打包的时候忽略配置，由maven手动配置copy文件 -->
         <!-- <resources> <resource> <directory>src/main/resources/**</directory>
